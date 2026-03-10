@@ -1,24 +1,37 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import API from "../services/api"
+import Dashboard from "./Dashboard"
 
 function Login(){
 
  const [email,setEmail] = useState("")
  const [password,setPassword] = useState("")
+ const navigate = useNavigate()
 
- const handleLogin = async ()=>{
+ const handleLogin = async () => {
 
-  const res = await API.post("/auth/login",{
-   email,
-   password
-  })
+  try{
 
-  localStorage.setItem("token", res.data.token)
+   const res = await API.post("/auth/login",{
+    email,
+    password
+   })
 
-  alert("Login successful")
+   localStorage.setItem("token", res.data.token)
+
+   navigate("/dashboard")
+
+  }catch(err){
+
+   alert("Login failed")
+
+  }
+
  }
 
  return(
+
   <div>
 
    <h2>Login</h2>
@@ -39,7 +52,9 @@ function Login(){
    </button>
 
   </div>
+
  )
+
 }
 
 export default Login
