@@ -1,32 +1,20 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import API from "../services/api"
-import Dashboard from "./Dashboard"
 
 function Login(){
 
  const [email,setEmail] = useState("")
  const [password,setPassword] = useState("")
+
  const navigate = useNavigate()
 
- const handleLogin = async () => {
+ const handleLogin = () => {
 
-  try{
-
-   const res = await API.post("/auth/login",{
-    email,
-    password
-   })
-
-   localStorage.setItem("token", res.data.token)
-
-   navigate("/dashboard")
-
-  }catch(err){
-
-   alert("Login failed")
-
-  }
+   if(email && password){
+     navigate("/dashboard")
+   }else{
+     alert("Enter email and password")
+   }
 
  }
 
@@ -34,7 +22,7 @@ function Login(){
 
   <div>
 
-   <h2>Login</h2>
+   <h1>Login Page</h1>
 
    <input
     placeholder="Email"
@@ -42,8 +30,8 @@ function Login(){
    />
 
    <input
-    placeholder="Password"
     type="password"
+    placeholder="Password"
     onChange={(e)=>setPassword(e.target.value)}
    />
 

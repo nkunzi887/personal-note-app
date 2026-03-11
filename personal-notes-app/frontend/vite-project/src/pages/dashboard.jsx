@@ -1,93 +1,74 @@
-import { useEffect, useState } from "react"
-import API from "../services/api"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 function Dashboard(){
 
+ const [note,setNote] = useState("")
  const [notes,setNotes] = useState([])
- const [title,setTitle] = useState("")
- const [content,setContent] = useState("")
 
- const token = localStorage.getItem("token")
+ const navigate = useNavigate()
 
- const getNotes = async () => {
+ const addNote = () => {
 
-  const res = await API.get("/notes",{
-   headers:{ Authorization: token }
-  })
-
-  setNotes(res.data)
+  if(note !== ""){
+   setNotes([...notes,note])
+   setNote("")
+  }
 
  }
 
- useEffect(()=>{
-  getNotes()
- },[])
+ const deleteNote = (index) => {
 
- const createNote = async ()=>{
-
-  await API.post("/notes",
-   {title,content},
-   {headers:{ Authorization: token }}
-  )
-
-  setTitle("")
-  setContent("")
-
-  getNotes()
+  const newNotes = notes.filter((n,i)=> i !== index)
+  setNotes(newNotes)
 
  }
 
- const deleteNote = async(id)=>{
-
-  await API.delete(`/notes/${id}`,{
-   headers:{ Authorization: token }
-  })
-
-  getNotes()
-
+ const logout = () => {
+  navigate("/login")
  }
 
  return(
 
-  <div>
+  <div style={{padding:"40px", fontFamily:"Arial"}}>
 
-   <h1>My Notes Dashboard</h1>
+   <h1>Personal Notes App</h1>
 
-   <div>
-
-    <input
-     placeholder="Note Title"
-     value={title}
-     onChange={(e)=>setTitle(e.target.value)}
-    />
-
-    <input
-     placeholder="Note Content"
-     value={content}
-     onChange={(e)=>setContent(e.target.value)}
-    />
-
-    <button onClick={createNote}>
-     Create Note
-    </button>
-
-   </div>
+   <button onClick={logout}>
+    Logout
+   </button>
 
    <hr/>
 
-   {notes.map(note=>(
-    <div key={note._id}>
+   <h2>Add Note</h2>
 
-     <h3>{note.title}</h3>
-     <p>{note.content}</p>
+   <input
+    placeholder="Write a note..."
+    value={note}
+    onChange={(e)=>setNote(e.target.value)}
+   />
 
-     <button onClick={()=>deleteNote(note._id)}>
-      Delete
+   <button onClick={addNote}>
+    Add
+   </button>
 
-     </button>
+   <h2>My Notes</h2>
 
-    </div>
-   ))}
+   <ul>
+
+    {notes.map((n,index)=>(
+     <li key={index}>
+
+      {n}
+
+      <button onClick={()=>deleteNote(index)}>
+       Delete
+      </button>
+
+     </li>
+    ))}
+
+   </ul>
 
   </div>
 
